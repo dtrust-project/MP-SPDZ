@@ -90,8 +90,65 @@ def scale():
         scale[0].update(scale[0] + sint.get_input_from(i))
         scale[1].update(scale[1] + sint.get_input_from(i))
     #FIXME: these numbers need to be from 0.5 to 2
-    
+    scale_matrix = Matrix(3,3,sfix)
+    scale_matrix[0][0] = scale[0]
+    scale_matrix[0][1] = 0
+    scale_matrix[0][2] = 0
+    scale_matrix[1][0] = 0
+    scale_matrix[1][1] = scale[1]
+    scale_matrix[1][2] = 0
+    scale_matrix[2][0] = 0
+    scale_matrix[2][1] = 0
+    scale_matrix[2][2] = 1
+    A = TO.direct_mul(scale_matrix)
+    final = A.direct_mul(back_array)
+    return final
 
+
+def shear():
+    shear = Array(2, sfix)
+    shear[0] = 0
+    shear[1] = 0
+    @for_range(cserver_num)
+    def _(i):
+        shear[0].update(shear[0] + sint.get_input_from(i))
+        shear[1].update(shear[1] + sint.get_input_from(i))
+    #FIXME: these numbers need to be from 0 to 0.6
+    shear_matrix = Matrix(3,3,sfix)
+    shear_matrix[0][0] = 1
+    shear_matrix[0][1] = shear[0]
+    shear_matrix[0][2] = 0
+    shear_matrix[1][0] = shear[1]
+    shear_matrix[1][1] = 1
+    shear_matrix[1][2] = 0
+    shear_matrix[2][0] = 0
+    shear_matrix[2][1] = 0
+    shear_matrix[2][2] = 1
+    A = TO.direct_mul(shear_matrix)
+    final = A.direct_mul(back_array)
+    return final
+
+def translate():
+    translate = Array(2, sint)
+    translate[0] = 0
+    translate[1] = 0
+    @for_range(cserver_num)
+    def _(i):
+	translate[0].update(translate[0] + sint.get_input_from(i))
+        translate[1].update(translate[1] + sint.get_input_from(i))
+    #FIXME: These numbers need to be between -20 to 20
+    
+    trans_mat = Matrix(3,3,sint)
+    trans_mat[0][0] = 1
+    trans_mat[0][1] = 0
+    trans_mat[0][2] = translate[0]
+    trans_mat[1][0] = 0
+    trans_mat[1][1] = 1
+    trans_mat[1][2] = translate[1]
+    trans_mat[2][0] = 0
+    trans_mat[2][1] = 0
+    trans_mat[2][2] = 1
+    return trans_mat
 
 
 #@for_range(50)
