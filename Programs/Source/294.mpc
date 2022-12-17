@@ -3113,7 +3113,7 @@ src_mat = [
     [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
 ]
 
-dict_mat = Matrix(len(src_mat), len(src_mat[0]), sint)
+dict_mat = Matrix(len(src_mat), len(src_mat[0]), cint)
 for i, row in enumerate(src_mat):
     for j, val in enumerate(row):
         dict_mat[i][j] = val
@@ -3155,8 +3155,26 @@ index = sint(0)
 @for_range(cserver_num)
 def _(i):
     index.update(index + sint.get_input_from(i))
-index.update((index * sint(61))) 
-index.update(index.int_div(sint(2160), 9)) #divide with a value larger than than what total number can be
+index.update(index % 64)
+#index.update((index * sint(61))) 
+#index.update(index.int_div(sint(2160), 9)) #divide with a value larger than than what total number can be. This index is between 0 and 61.
+
+#My current array is of size 62 * 50, 50.
+index = index.reveal()
+a = index * 50
+b = (index + 1) * 50
+
+original_img = Matrix(50, 50, sint)
+for i in range(50):
+    for j in range(50):
+        original_img[i][j] = dict_mat[50 * index + i][j]
+        #print_ln("%s", original_img[i][j])
+    #print("\n")
+
+print_ln("%s", original_img.reveal_nested())
+
+#orginal_image = dict_mat[a:b]
+#print_reveal_nested(original_image)
 
 # MOD INDEX
 #index = sint.mod2m(index, 62, 64)
@@ -3169,7 +3187,7 @@ print_ln("index = %s", index.reveal())
 #print_ln("a = %s", a.reveal())
 
 img_matrix = Matrix(50, 50, sint) #Filled depending on the index value
-rot_matrix = rotate()
+#rot_matrix = rotate()
 
 
 
