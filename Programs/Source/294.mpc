@@ -7,9 +7,6 @@ from Compiler import mpc_math
 import sys
 program.set_bit_length(128)
 
-cserver_num = 3
-aserver_num = 2
-
 src_mat = [
     [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
     [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
@@ -3130,6 +3127,8 @@ TO[2][0] = 0
 TO[2][1] = 0
 TO[2][2] = 1
 
+cserver_num = regint()
+nplayers(cserver_num)
 
 back_array = Matrix(3, 3, sint)
 back_array[0][0] = 1
@@ -3141,12 +3140,6 @@ back_array[1][2] = -25
 back_array[2][0] = 0
 back_array[2][1] = 0
 back_array[2][2] = 1
-#NPLAYERS = regint(5)
-#nplayers(regint(3))
-#nplayers(5)
-a = regint()
-nplayers(a)
-print_ln("%s", a)
 def test(actual, expected):
 	actual = actual.reveal()
 	print_ln("expected %s, got %s", expected, actual)
@@ -3588,6 +3581,6 @@ def time_private_mac(n_total, n_parallel, nmessages):
 
     stop_timer(1)
 
-print_ln('##############################################')
-time_private_mac(n_total, n_parallel, nmessages)
-print_ln('##############################################')
+#print_ln('##############################################')
+#time_private_mac(n_total, n_parallel, nmessages)
+#print_ln('##############################################')
