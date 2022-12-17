@@ -5,7 +5,7 @@ from Compiler import instructions
 from random import randint
 from Compiler import mpc_math
 import sys
-program.bit_length = 128
+program.set_bit_length(128)
 
 cserver_num = 3
 aserver_num = 2
@@ -47,13 +47,17 @@ index = sint(0)
 @for_range(cserver_num)
 def _(i):
     index.update(index + sint.get_input_from(i))
-#FIXME: MOD INDEX
+index.update((index * sint(61))) 
+index.update(index.int_div(sint(2160), 9)) #divide with a value larger than than what total number can be
+
+# MOD INDEX
 #index = sint.mod2m(index, 62, 64)
 #index = index.mod2m(62, 64) 
-#a = sint(360)
+#a = sint(1)
+#b = sint(1)
 #a = sint.mod2m(a, 256, 64)
-#a = a.mod2m(256, 64)
-#print_ln("index = %s", index.reveal())
+#a = a.int_div(b, 2)
+print_ln("index = %s", index.reveal())
 #print_ln("a = %s", a.reveal())
 
 data = Matrix(50, 50, sint)
@@ -63,7 +67,9 @@ def rotate():
     @for_range(cserver_num)
     def _(i):
         rot_angle.update(rot_angle + sint.get_input_from(i))
-    #FIXME: modulo rot_angle
+    rot_angle.update(rot_angle * sint(720))
+    rot_angle.update(rot_angle.int_div(sint(2160)))
+    rot_angle.update(rot_angle - sint(360)) 
 
     rot_matrix = Matrix(3, 3, sfix)
     rot_matrix[0][0] = mpc_math.cos(rot_angle)
@@ -87,9 +93,16 @@ def scale():
     scale[1] = 0
     @for_range(cserver_num)
     def _(i):
-        scale[0].update(scale[0] + sint.get_input_from(i))
-        scale[1].update(scale[1] + sint.get_input_from(i))
-    #FIXME: these numbers need to be from 0.5 to 2
+        scale[0].update(scale[0] + sfix.get_input_from(i))
+        scale[1].update(scale[1] + sfix.get_input_from(i))
+    
+    scale[0].update(scale[0] * sfix(3.0))
+    scale[0].update(scale[0] / sfix(2160))
+    scale[0].update(scale[0] + sfix(0.5))
+    scale[1].update(scale[1] * sfix(3.0))
+    scale[1].update(scale[1] / sfix(2160))
+    scale[1].update(scale[1] + sfix(0.5))
+    
     scale_matrix = Matrix(3,3,sfix)
     scale_matrix[0][0] = scale[0]
     scale_matrix[0][1] = 0
@@ -111,9 +124,14 @@ def shear():
     shear[1] = 0
     @for_range(cserver_num)
     def _(i):
-        shear[0].update(shear[0] + sint.get_input_from(i))
-        shear[1].update(shear[1] + sint.get_input_from(i))
-    #FIXME: these numbers need to be from 0 to 0.6
+        shear[0].update(shear[0] + sfix.get_input_from(i))
+        shear[1].update(shear[1] + sfix.get_input_from(i))
+    shear[0].update(shear[0] * sfix(1.2))
+    shear[0].update(shear[0] / sfix(2160))
+    shear[1].update(shear[1] * sfix(1.2))
+    shear[1].update(shear[1] / sfix(2160))
+    
+
     shear_matrix = Matrix(3,3,sfix)
     shear_matrix[0][0] = 1
     shear_matrix[0][1] = shear[0]
@@ -134,10 +152,15 @@ def translate():
     translate[1] = 0
     @for_range(cserver_num)
     def _(i):
-	translate[0].update(translate[0] + sint.get_input_from(i))
+        translate[0].update(translate[0] + sint.get_input_from(i))
         translate[1].update(translate[1] + sint.get_input_from(i))
-    #FIXME: These numbers need to be between -20 to 20
+    translate[0].update(translate[0] * sint(40))
+    translate[0].update(translate[0].int_div(2160,9))
+    translate[0].update(translate[0] - sint(20)) 
     
+    translate[1].update(translate[1] * sint(40))
+    translate[1].update(translate[1].int_div(2160,9))
+    translate[1].update(translate[1] - sint(20)) 
     trans_mat = Matrix(3,3,sint)
     trans_mat[0][0] = 1
     trans_mat[0][1] = 0
@@ -149,6 +172,15 @@ def translate():
     trans_mat[2][1] = 0
     trans_mat[2][2] = 1
     return trans_mat
+
+def ones_like(matrix):
+    new_matrix = matrix.same_shape()
+    fill_with_ones_matrix = new_matrix(1)
+    return fill_with_ones_matrix
+
+def ravel(matrix):
+    vec = sint.Array(matrix.rows * matrix.columns)
+    return vec.assign_vector(matrix) 
 
 
 #@for_range(50)
