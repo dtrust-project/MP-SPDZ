@@ -3170,14 +3170,20 @@ print_ln("index = %s", index.reveal())
 
 data = Matrix(50, 50, sint)
 
-def rotate():
-    rot_angle = 0
+
+def get_random_sfix(low, high):
+    rand = sfix.get_input_from(i)
+    s = sint(0)
     @for_range(cserver_num)
     def _(i):
-        rot_angle.update(rot_angle + sint.get_input_from(i))
-    rot_angle.update(rot_angle * sint(720))
-    rot_angle.update(rot_angle.int_div(sint(2160)))
-    rot_angle.update(rot_angle - sint(360)) 
+        s.update(s + sint.get_input_from(i))
+    s.update(s % 2 ** 31)
+    sf = sfix(s) / 2 ** 31 * (high - low) + low
+    return sf
+
+
+def rotate():
+    rot_angle = get_random_sfix(-360, 360)
 
     rot_matrix = Matrix(3, 3, sfix)
     rot_matrix[0][0] = mpc_math.cos(rot_angle)
