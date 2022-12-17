@@ -3113,6 +3113,7 @@ src_mat = [
     [255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255],
 ]
 
+start_timer(1)
 dict_mat = Matrix(len(src_mat), len(src_mat[0]), cint)
 for i, row in enumerate(src_mat):
     for j, val in enumerate(row):
@@ -3424,8 +3425,8 @@ def warp(img, x, y):
 """
 
 n_parallel = 1 #int(sys.argv[2])
-n_total = 8 #int(sys.argv[3])
-nmessages = 10 #int(sys.argv[4])
+n_total = 1 #int(sys.argv[3])
+nmessages = 1 #int(sys.argv[4])
 
 use_mimc_prf = True
 # Use just one PRF
@@ -3528,9 +3529,11 @@ class NonceEncryptMAC(object):
 
     def checker(self, nonce, ciphertext, recv_tag):
         message, tag = self.decrypt(nonce, ciphertext, recv_tag)
-        print_ln('decrypted plaintext:')
+        #print_ln('decrypted plaintext:')
         for i in range(len(message)):
-            print_str('%s ', message[i].reveal())
+            #print_str('%s ', message[i].reveal())
+            print_ln("HMAC verification")
+            test(message[i].reveal(), index)
         print_ln()
 
 key = sint(0)
@@ -3539,7 +3542,7 @@ def time_private_mac(n_total, n_parallel, nmessages):
     # by measuring amount of triples/bits used between blocks
     Program.prog.curr_tape.start_new_basicblock(name='preproc-block')
 
-    num_calls = nmessages + 1
+    num_calls = index
     # To test decryption we require 2(N+1) calls - (N+1)encrypt + (N+1)decrypt
     if test_decryption:
         num_calls *= 2
@@ -3552,15 +3555,13 @@ def time_private_mac(n_total, n_parallel, nmessages):
         #key = key + sint.get_input_from(0)
         @for_range(cserver_num, aserver_num + cserver_num)
         def f(i):
-            print_ln("%s", i)
             #a = key
             #b = sint.get_input_from(i)
             #key = key + sint.get_input_from(i)
             #a = sint.get_input_from(i)
             key.update(key + sint.get_input_from(i))
-            print_ln("ran %s", i)
-        print_ln("key value %s", key.reveal())
-        enc_alg = MiMC(73, key, num_calls)
+        #print_ln("key value %s", key.reveal())
+        enc_alg = MiMC(73, key, 5)
     elif use_leg_prf:
         enc_alg = LegPRF(num_calls, bit_len=128)
 
@@ -3574,16 +3575,16 @@ def time_private_mac(n_total, n_parallel, nmessages):
     Program.prog.curr_tape.start_new_basicblock(name='online-block')
 
     # Benchmark n_total HtMAC's while executing in parallel n_parallel
-    start_timer(1)
-    @for_range(n_total // n_parallel)
-    def block(index):
+    #start_timer(1)
+    #@for_range(n_total // n_parallel)
+    #def block(index):
         # Re-use off-line data after n_parallel runs for benchmarking purposes.
         # If real system-use need to initialize num_calls with a larger constant.
-        enc_alg.reset_kd_pre()
-        message = [sint(2*i+1) for i in range(nmessages)]
-        iv, ciphertext, tag = auth_scheme.apply(message)
-        if test_decryption:
-            auth_scheme.checker(iv, ciphertext, tag)
+    enc_alg.reset_kd_pre()
+    message = [sint(index)] #[sint(2*i+1) for i in range(nmessages)]
+    iv, ciphertext, tag = auth_scheme.apply(message)
+    if test_decryption:
+        auth_scheme.checker(iv, ciphertext, tag)
 
     stop_timer(1)
 
