@@ -3168,7 +3168,9 @@ index.update(index.int_div(sint(2160), 9)) #divide with a value larger than than
 print_ln("index = %s", index.reveal())
 #print_ln("a = %s", a.reveal())
 
-data = Matrix(50, 50, sint)
+img_matrix = Matrix(50, 50, sint) #Filled depending on the index value
+rot_matrix = rotate()
+
 
 
 def get_random_sfix(low, high):
@@ -3296,6 +3298,64 @@ def ravel(matrix):
     vec = sint.Array(matrix.rows * matrix.columns)
     return vec.assign_vector(matrix) 
 
+def matrix_new_coordinates(img, matrix):
+    height = img.rows
+    width = img.columns
+    arrX = Matrix(50, 50, sint)
+    for i in range(50):
+        for j in range(50):
+            arrX[i][j] = i
+    
+    arrY = Matrix(50, 50, sint)
+    for i in range(50):
+        for j in range(50):
+            arrY[i][j] = j
+
+    m1 = ravel(arrX)
+    m2 = ravel(arrY)
+    m1_ones = ones_like(arrX)
+    m1_ravel = ravel(m1_ones)
+    coords = Matrix(50, 150, sint)
+    coords[:50, :50] = m1
+    coords[:50, 50:100] = m2
+    coords[:50, 100:] = m1_ravel
+
+    new_coords = matrix.direct_mul(coords)
+    new_x = new_coords[0] / new_coords[-1]
+    new_y = new_coords[1] / new_coords[-1]
+    
+    new_x_matrix = Matrix(height, width, sfix)
+    new_x_matrix.assign_vector(new_x)
+    new_y_matrix = Matrix(height, width, sfix)
+    new_y_matrix.assign_vector(new_y)
+
+    return (new_x_matrix, new_y_matrix)
+
+
+def warp(img, x, y):
+    height = img.rows
+    width = img.columns
+
+    x0 = Matrix(height, width, sint)
+    x1 = Matrix(height, width, sint)
+
+    for i in range(height):
+        for j in range(width):
+            x0[i][j] = x[i][j] // regint(1)
+            x1[i][j] = x[i][j] - x0[i][j]
+
+    y0 = Matrix(height, width, sint)
+    y1 = Matrix(height, width, sint)
+
+    for i in range(height):
+        for j in range(width):
+            y0[i][j] = y[i][j] // regint(1)
+            y1[i][j] = y[i][j] - y0[i][j]
+
+    new_img = ones_like(img) * 255
+    for i in range(new_img.rows):
+        for j in range(new_img.columns):
+            return 0
 
 #@for_range(50)
 #def _(i):
