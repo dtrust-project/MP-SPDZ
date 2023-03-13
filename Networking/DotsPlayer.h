@@ -1,21 +1,18 @@
 #ifndef NETWORKING_DOTSPLAYER_H_
 #define NETWORKING_DOTSPLAYER_H_
 
-#include <condition_variable>
 #include <mutex>
 #include <string>
-#include <unordered_map>
+#include <unordered_set>
 #include "Networking/Player.h"
 
 class DotsPlayer : public Player {
   private:
-    /* Socket matching. */
-    static mutex receivedSocketsLock;
-    static unordered_map<string, int> receivedSockets;
-    static condition_variable socketReceived;
+    static unordered_set<int> curTags;
+    static mutex curTagsLock;
 
     string id;
-    vector<int> sockets;
+    int dotsTag;
 
   public:
     DotsPlayer(const string& id);
