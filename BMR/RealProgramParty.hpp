@@ -22,6 +22,7 @@
 #include "GC/ThreadMaster.hpp"
 #include "Math/Z2k.hpp"
 #include "Protocols/fake-stuff.hpp"
+#include "Networking/DotsPlayer.h"
 
 template<class T>
 RealProgramParty<T>* RealProgramParty<T>::singleton = 0;
@@ -80,10 +81,7 @@ RealProgramParty<T>::RealProgramParty(int argc, const char** argv) :
 	this->_id = online_opts.playerno + 1;
 	Server::start_networking(N, online_opts.playerno, nparties,
 			network_opts.hostname, network_opts.portnum_base);
-	if (T::dishonest_majority)
-	    P = new PlainPlayer(N, 0);
-	else
-	    P = new CryptoPlayer(N, 0);
+    P = new DotsPlayer("0");
 
 	delta = prng.get_doubleword();
 	delta.set_signal(1);
@@ -108,8 +106,8 @@ RealProgramParty<T>::RealProgramParty(int argc, const char** argv) :
 	MC = new typename T::MAC_Check(mac_key);
 
 	garble_processor.reset(program);
-	this->processor.open_input_file(N.my_num(), 0, online_opts.cmd_private_input_file);
-	this->processor.setup_redirection(P->my_num(), 0, online_opts, this->processor.out);
+	this->processor.open_input_file(N.my_num(), 0, online_opts.cmd_private_input_file, garble_machine.use_dots);
+	this->processor.setup_redirection(P->my_num(), 0, online_opts, garble_machine.use_dots, this->processor.out);
 
 	shared_proc = new SubProcessor<T>(dummy_proc, *MC, *prep, *P);
 

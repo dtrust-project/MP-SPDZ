@@ -20,6 +20,7 @@ template <class T>
 Machine<T>::Machine()
 {
     use_encryption = false;
+    use_dots = true;
     more_comm_less_comp = false;
     start_timer();
 }

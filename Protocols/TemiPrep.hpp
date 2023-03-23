@@ -12,6 +12,8 @@
 
 #include "FHEOffline/DataSetup.hpp"
 
+#include "Networking/DotsPlayer.h"
+
 template<class T>
 TemiSetup<typename T::clear::FD>* TemiPrep<T>::setup;
 
@@ -64,7 +66,7 @@ void TemiPrep<T>::buffer_triples()
     lock.lock();
     if (setup == 0)
     {
-        PlainPlayer P(this->proc->P.N, "Temi" + T::type_string());
+        DotsPlayer P("Temi" + T::type_string());
         basic_setup(P);
     }
     lock.unlock();

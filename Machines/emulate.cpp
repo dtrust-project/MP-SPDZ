@@ -55,8 +55,8 @@ int main(int argc, const char** argv)
     {
 #define X(L) \
     case L: \
-        Machine<FakeShare<SignedZ2<L>>, FakeShare<gf2n>>(N, false, online_opts, \
-                gf2n::default_degree()).run(progname); \
+        Machine<FakeShare<SignedZ2<L>>, FakeShare<gf2n>>(N, false, true, \
+                online_opts, gf2n::default_degree()).run(progname); \
         break;
     X(64) X(128) X(256) X(192) X(384) X(512)
 #ifdef RING_SIZE

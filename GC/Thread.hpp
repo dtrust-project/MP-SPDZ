@@ -10,6 +10,7 @@
 #include "Program.h"
 
 #include "Networking/CryptoPlayer.h"
+#include "Networking/DotsPlayer.h"
 #include "Processor/Processor.h"
 
 #include "Processor.hpp"
@@ -52,14 +53,18 @@ void Thread<T>::run()
     BaseMachine::s().thread_num = thread_num;
     secure_prng.ReSeed();
     string id = "T" + to_string(thread_num);
-    if (machine.use_encryption)
-        P = new CryptoPlayer(N, id);
-    else
-        P = new PlainPlayer(N, id);
+    if (machine.use_dots) {
+        P = new DotsPlayer(id);
+    } else {
+        if (machine.use_encryption)
+            P = new CryptoPlayer(N, id);
+        else
+            P = new PlainPlayer(N, id);
+    }
     processor.open_input_file(N.my_num(), thread_num,
-            master.opts.cmd_private_input_file);
+            master.opts.cmd_private_input_file, machine.use_dots);
     processor.setup_redirection(P->my_num(), thread_num, master.opts,
-            processor.out);
+            machine.use_dots, processor.out);
 
     done.push(0);
     pre_run();

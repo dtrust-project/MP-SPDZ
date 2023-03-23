@@ -12,6 +12,8 @@
 
 #include "FHEOffline/DataSetup.hpp"
 
+#include "Networking/DotsPlayer.h"
+
 template<class T>
 MultiplicativeMachineParams* ChaiGearPrep<T>::machine = 0;
 template<class T>
@@ -100,7 +102,7 @@ typename ChaiGearPrep<T>::Generator& ChaiGearPrep<T>::get_generator()
     lock.lock();
     if (machine == 0 or machine->setup.part<FD>().alphai == 0)
     {
-        PlainPlayer P(proc->P.N, "ChaiGear" + T::type_string());
+        DotsPlayer P("ChaiGear" + T::type_string());
         if (machine == 0)
             basic_setup(P);
         key_setup(P, proc->MC.get_alphai());

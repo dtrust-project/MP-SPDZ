@@ -7,6 +7,7 @@
 
 #include "Networking/Server.h"
 #include "Networking/CryptoPlayer.h"
+#include "Networking/DotsPlayer.h"
 #include "Math/gfp.h"
 #include "ECDSA/P256Element.h"
 #include "GC/VectorInput.h"
@@ -37,7 +38,7 @@ int main(int argc, const char** argv)
     int n_tuples = 1000;
     if (not opt.lastArgs.empty())
         n_tuples = atoi(opt.lastArgs[0]->c_str());
-    PlainPlayer P(N, "ecdsa");
+    DotsPlayer P("ecdsa");
     P256Element::init();
 
     P256Element::Scalar keyp;

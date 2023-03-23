@@ -9,6 +9,7 @@
 #include "ShareThread.h"
 #include "SemiPrep.h"
 #include "Networking/Server.h"
+#include "Networking/DotsPlayer.h"
 #include "Networking/CryptoPlayer.h"
 #include "Tools/ezOptionParser.h"
 #include "Tools/benchmarking.h"
@@ -103,10 +104,14 @@ ShareParty<T>::ShareParty(int argc, const char** argv, ez::ezOptionParser& opt,
     network_opts.start_networking(this->N, my_num);
 
     Player* P;
-    if (this->machine.use_encryption)
-        P = new CryptoPlayer(this->N, "shareparty");
-    else
-        P = new PlainPlayer(this->N, "shareparty");
+    if (this->machine.use_dots) {
+        P = new DotsPlayer("shareparty");
+    } else {
+        if (this->machine.use_encryption)
+            P = new CryptoPlayer(this->N, "shareparty");
+        else
+            P = new PlainPlayer(this->N, "shareparty");
+    }
 
     try
     {
