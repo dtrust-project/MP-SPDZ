@@ -23,7 +23,6 @@ static int djb2_hash(const string& str) {
 DotsPlayer::DotsPlayer(const string& id) :
         Player(Names(dots_world_rank, dots_world_size)), id(id) {
     dotsTag = djb2_hash(id);
-    cout << id << " " << dotsTag << endl;
     {
         lock_guard<mutex> lock(curTagsLock);
         if (curTags.find(dotsTag) != curTags.end()) {
