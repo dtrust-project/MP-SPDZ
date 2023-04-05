@@ -118,7 +118,9 @@ class Names
   Names(ez::ezOptionParser& opt, int argc, const char** argv,
       int default_nplayers = 2);
 
+  void init(int my_num, int num_players);
   Names(int my_num = 0, int num_players = 1);
+
   Names(const Names& other);
   ~Names();
 
