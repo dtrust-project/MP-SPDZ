@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <iostream>
+#include <vector>
 #include <ext/stdio_filebuf.h>
 #include <dots.h>
 
@@ -30,10 +31,13 @@ void ProcessorBase::open_input_file(const string& name)
 inline
 void ProcessorBase::open_dots_file(int thread_num)
 {
-    if (thread_num < 0 || (size_t) thread_num >= dots_in_fds_len) {
+    size_t num_in_files = dots_env_get_num_in_files();
+    if (thread_num < 0 || (size_t) thread_num >= num_in_files) {
         throw runtime_error("No DoTS input present for thread num = " + to_string(thread_num));
     }
-    input_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(dots_in_fds[thread_num], ios::in);
+    vector<int> in_fds(num_in_files);
+    dots_env_get_in_fds(in_fds.data());
+    input_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(in_fds[thread_num], ios::in);
     input_file = make_unique<istream>(input_fdbuf.get());
 }
 

@@ -3,6 +3,7 @@
  *
  */
 
+#include <vector>
 #include "ProcessorBase.hpp"
 
 ProcessorBase::ProcessorBase() :
@@ -34,10 +35,13 @@ void ProcessorBase::setup_redirection(int my_num, int thread_num,
         OnlineOptions& opts, bool use_dots, SwitchableOutput& out)
 {
     if (use_dots) {
-        if (thread_num < 0 || (size_t) thread_num >= dots_out_fds_len) {
+        size_t num_out_files = dots_env_get_num_out_files();
+        if (thread_num < 0 || (size_t) thread_num >= num_out_files) {
             throw runtime_error("No DoTS output present for thread num = " + to_string(thread_num));
         }
-        output_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(dots_out_fds[thread_num], ios::out);
+        vector<int32_t> out_fds(num_out_files);
+        dots_env_get_out_fds(out_fds.data());
+        output_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(out_fds[thread_num], ios::out);
         output_file = make_unique<ostream>(output_fdbuf.get());
         out.activate(true);
         out.redirect_to_file(*output_file);

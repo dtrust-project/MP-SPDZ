@@ -21,7 +21,7 @@ static int djb2_hash(const string& str) {
 }
 
 DotsPlayer::DotsPlayer(const string& id) :
-        Player(Names(dots_world_rank, dots_world_size)), id(id) {
+        Player(Names(dots_env_get_world_rank(), dots_env_get_world_size())), id(id) {
     dotsTag = djb2_hash(id);
     {
         lock_guard<mutex> lock(curTagsLock);
@@ -33,11 +33,11 @@ DotsPlayer::DotsPlayer(const string& id) :
 }
 
 int DotsPlayer::num_players() const {
-    return dots_world_size;
+    return dots_env_get_world_size();
 }
 
 int DotsPlayer::my_num() const {
-    return dots_world_rank;
+    return dots_env_get_world_rank();
 }
 
 void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
