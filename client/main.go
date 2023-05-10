@@ -48,15 +48,15 @@ func main() {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	requestId := uuid.New()
-	for _, client := range clients {
+	for i, client := range clients {
+		i := i
 		client := client
 		go func() {
 			res, err := client.Exec(ctx, &dotspb.App{
 				AppName: appName,
 				FuncName: "unused",
 				RequestId: uuidToPb(requestId),
-				InFiles: []string{"input"},
-				OutFiles: []string{"output"},
+				Args: [][]byte{[]byte(fmt.Sprintf("node%d-input", i)), []byte(fmt.Sprintf("node%d-output", i))},
 			})
 			if err != nil {
 				errChan <- err

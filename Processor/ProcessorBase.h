@@ -9,8 +9,6 @@
 #include <stack>
 #include <string>
 #include <fstream>
-#include <memory>
-#include <ext/stdio_filebuf.h>
 using namespace std;
 
 #include "Tools/ExecutionStats.h"
@@ -22,8 +20,7 @@ class ProcessorBase
   // Stack
   stack<long> stacki;
 
-  unique_ptr<istream> input_file;
-  unique_ptr<__gnu_cxx::stdio_filebuf<char>> input_fdbuf;
+  ifstream input_file;
   string input_filename;
   size_t input_counter;
 
@@ -37,8 +34,7 @@ protected:
 public:
   ExecutionStats stats;
 
-  unique_ptr<ostream> output_file;
-  unique_ptr<__gnu_cxx::stdio_filebuf<char>> output_fdbuf;
+  ofstream stdout_redirect_file;
 
   ProcessorBase();
 
@@ -56,8 +52,7 @@ public:
     }
 
   void open_input_file(const string& name);
-  void open_dots_file(int thread_num);
-  void open_input_file(int my_num, int thread_num, const string& prefix="", bool use_dots = false);
+  void open_input_file(int my_num, int thread_num, const string& prefix="");
 
   template<class T>
   T get_input(bool interactive, const int* params);
@@ -65,7 +60,8 @@ public:
   T get_input(istream& is, const string& input_filename, const int* params);
 
   void setup_redirection(int my_nu, int thread_num, OnlineOptions& opts,
-          bool use_dots, SwitchableOutput& out);
+      SwitchableOutput& out);
+  void setup_redirection(const string& name, SwitchableOutput& out);
 };
 
 #endif /* PROCESSOR_PROCESSORBASE_H_ */

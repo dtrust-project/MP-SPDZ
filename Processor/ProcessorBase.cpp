@@ -3,7 +3,6 @@
  *
  */
 
-#include <vector>
 #include "ProcessorBase.hpp"
 
 ProcessorBase::ProcessorBase() :
@@ -18,44 +17,27 @@ string ProcessorBase::get_parameterized_filename(int my_num, int thread_num, con
 }
 
 void ProcessorBase::open_input_file(int my_num, int thread_num,
-        const string& prefix, bool use_dots)
+        const string& prefix)
 {
-    if (use_dots) {
-        open_dots_file(thread_num);
-    } else {
-        string tmp = prefix;
-        if (prefix.empty())
-            tmp = "Player-Data/Input";
+    string tmp = prefix;
+    if (prefix.empty())
+        tmp = "Player-Data/Input";
 
-        open_input_file(get_parameterized_filename(my_num, thread_num, tmp));
-    }
+    open_input_file(get_parameterized_filename(my_num, thread_num, tmp));
 }
 
 void ProcessorBase::setup_redirection(int my_num, int thread_num,
-        OnlineOptions& opts, bool use_dots, SwitchableOutput& out)
+		OnlineOptions& opts, SwitchableOutput& out)
 {
-    if (use_dots) {
-        size_t num_out_files = dots_env_get_num_out_files();
-        if (thread_num < 0 || (size_t) thread_num >= num_out_files) {
-            throw runtime_error("No DoTS output present for thread num = " + to_string(thread_num));
-        }
-        vector<int32_t> out_fds(num_out_files);
-        dots_env_get_out_fds(out_fds.data());
-        output_fdbuf = make_unique<__gnu_cxx::stdio_filebuf<char>>(out_fds[thread_num], ios::out);
-        output_file = make_unique<ostream>(output_fdbuf.get());
-        out.activate(true);
-        out.redirect_to_file(*output_file);
-    } else {
-        // only output on party 0 if not interactive
-        bool always_stdout = opts.cmd_private_output_file == ".";
-        bool output = my_num == 0 or opts.interactive or always_stdout;
-        out.activate(output);
+    // only output on party 0 if not interactive
+    bool always_stdout = opts.cmd_private_output_file == ".";
+    bool output = my_num == 0 or opts.interactive or always_stdout;
+    out.activate(output);
 
-        if (not (opts.cmd_private_output_file.empty() or always_stdout)) {
-            const string stdout_filename = get_parameterized_filename(my_num,
-                    thread_num, opts.cmd_private_output_file);
-            output_file = make_unique<ofstream>(stdout_filename.c_str());
-            out.redirect_to_file(*output_file);
-        }
+    if (not (opts.cmd_private_output_file.empty() or always_stdout))
+    {
+        const string stdout_filename = get_parameterized_filename(my_num,
+                thread_num, opts.cmd_private_output_file);
+        setup_redirection(stdout_filename, out);
     }
 }

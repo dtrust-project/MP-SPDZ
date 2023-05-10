@@ -6,6 +6,8 @@
 #ifndef PROCESSOR_ONLINEMACHINE_H_
 #define PROCESSOR_ONLINEMACHINE_H_
 
+#include <dots.h>
+
 #include "Processor/OnlineOptions.h"
 #include "Math/gf2n.h"
 #include "Networking/Player.h"
@@ -23,6 +25,7 @@ protected:
 
     bool use_encryption;
     bool use_dots;
+    dots_request_t dots_request;
 
     ez::ezOptionParser& opt;
 
@@ -32,6 +35,7 @@ public:
     template<class V = gf2n>
     OnlineMachine(int argc, const char** argv, ez::ezOptionParser& opt,
             OnlineOptions& online_opts, int nplayers = 0, V = {});
+    ~OnlineMachine();
 
     void start_networking();
 

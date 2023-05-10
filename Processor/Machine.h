@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <atomic>
+#include <dots.h>
 using namespace std;
 
 template<class sint, class sgf2n>
@@ -67,7 +68,7 @@ class Machine : public BaseMachine
   bool receive_threads;
   int max_broadcast;
   bool use_encryption;
-  bool use_dots;
+  dots_request_t *dots_request;
   bool live_prep;
 
   OnlineOptions opts;
@@ -76,7 +77,8 @@ class Machine : public BaseMachine
 
   static void init_binary_domains(int security_parameter, int lg2);
 
-  Machine(Names& playerNames, bool use_encryption = true, bool use_dots = false,
+  Machine(Names& playerNames, bool use_encryption = true,
+          dots_request_t* dots_request = NULL,
           const OnlineOptions opts = sint(), int lg2 = 0);
   ~Machine();
 

@@ -4,6 +4,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_set>
+#include <dots.h>
 #include "Networking/Player.h"
 
 class DotsPlayer : public Player {

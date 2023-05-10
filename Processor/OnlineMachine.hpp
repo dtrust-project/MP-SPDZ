@@ -109,6 +109,15 @@ OnlineMachine::OnlineMachine(int argc, const char** argv, ez::ezOptionParser& op
     opt.resetArgs();
 }
 
+OnlineMachine::~OnlineMachine() {
+    if (use_dots) {
+        if (dots_request_finish(&dots_request)) {
+            cerr << "Error finishing DoTS request" << endl;
+        }
+        dots_request_free(&dots_request);
+    }
+}
+
 inline
 DishonestMajorityMachine::DishonestMajorityMachine(int argc,
         const char** argv, ez::ezOptionParser& opt, OnlineOptions& online_opts,
@@ -155,11 +164,15 @@ void OnlineMachine::start_networking()
             throw runtime_error("Cannot use encryption over DoTS network");
         }
 
-        if (dots_env_init()) {
-            throw runtime_error("Error initializing DoTS environment");
+        if (dots_init()) {
+            throw runtime_error("Error initializing DoTS runtime");
         }
 
-        playerNames.init(dots_env_get_world_rank(), dots_env_get_world_size());
+        if (dots_request_accept(&dots_request)) {
+            throw runtime_error("Error accepting DoTS request");
+        }
+
+        playerNames.init(dots_get_world_rank(), dots_get_world_size());
     } else {
         opt.get("--portnumbase")->getInt(pnbase);
         opt.get("--hostname")->getString(hostname);
@@ -217,7 +230,7 @@ int OnlineMachine::run()
     try
 #endif
     {
-        Machine<T, U>(playerNames, use_encryption, use_dots, online_opts, lg2).run(
+        Machine<T, U>(playerNames, use_encryption, use_dots ? &dots_request : NULL, online_opts, lg2).run(
                 online_opts.progname);
 
         if (online_opts.verbose)

@@ -21,7 +21,7 @@ static int djb2_hash(const string& str) {
 }
 
 DotsPlayer::DotsPlayer(const string& id) :
-        Player(Names(dots_env_get_world_rank(), dots_env_get_world_size())), id(id) {
+        Player(Names(dots_get_world_rank(), dots_get_world_size())), id(id) {
     dotsTag = djb2_hash(id);
     {
         lock_guard<mutex> lock(curTagsLock);
@@ -33,11 +33,11 @@ DotsPlayer::DotsPlayer(const string& id) :
 }
 
 int DotsPlayer::num_players() const {
-    return dots_env_get_world_size();
+    return dots_get_world_size();
 }
 
 int DotsPlayer::my_num() const {
-    return dots_env_get_world_rank();
+    return dots_get_world_rank();
 }
 
 void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
@@ -48,11 +48,11 @@ void DotsPlayer::send_to_no_stats(int player, const octetStream& o) const {
     cout << id << ": Sending " << o.get_length() << " bytes to " << player << endl;
 #endif
 
-    if (dots_msg_send(lenbuf, sizeof(lenbuf), player, dotsTag)) {
-        throw runtime_error("Error in dots_msg_send");
+    if (dots_msg_send(NULL, lenbuf, sizeof(lenbuf), player, dotsTag)) {
+        throw runtime_error("Error in dots_msg_send for length");
     }
-    if (dots_msg_send(o.get_data(), o.get_length(), player, dotsTag)) {
-        throw runtime_error("Error in dots_msg_send");
+    if (dots_msg_send(NULL, o.get_data(), o.get_length(), player, dotsTag)) {
+        throw runtime_error("Error in dots_msg_send for data");
     }
 
 #ifdef VERBOSE_COMM
@@ -68,12 +68,11 @@ void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
 #endif
 
     size_t bytes_received;
-    if (dots_msg_recv(lenbuf, sizeof(lenbuf), player, dotsTag,
-                &bytes_received)) {
+    if (dots_msg_recv(NULL, lenbuf, sizeof(lenbuf), player, dotsTag, &bytes_received)) {
         throw runtime_error("Error in dots_msg_recv");
     }
     if (bytes_received < sizeof(lenbuf)) {
-        throw runtime_error("Not enough bytes received in dots_msg_recv");
+        throw runtime_error("Not enough bytes received in dots_msg_recv for length");
     }
 
     size_t len = decode_length(lenbuf, LENGTH_SIZE);
@@ -81,11 +80,11 @@ void DotsPlayer::receive_player_no_stats(int player, octetStream& o) const {
     o.resize_min(len);
     octet *ptr = o.append(len);
 
-    if (dots_msg_recv(ptr, len, player, dotsTag, &bytes_received)) {
+    if (dots_msg_recv(NULL, ptr, len, player, dotsTag, &bytes_received)) {
         throw runtime_error("Error in dots_msg_recv");
     }
     if (bytes_received < len) {
-        throw runtime_error("Not enough bytes received in dots_msg_recv");
+        throw runtime_error("Not enough bytes received in dots_msg_recv for data");
     }
 
 #ifdef VERBOSE_COMM
@@ -100,7 +99,7 @@ size_t DotsPlayer::send_no_stats(int player, const PlayerBuffer& buffer,
     cout << id << ": [Player buffer] Sending " << buffer.size << " bytes to " << player << endl;
 #endif
 
-    if (dots_msg_send(buffer.data, buffer.size, player, dotsTag)) {
+    if (dots_msg_send(NULL, buffer.data, buffer.size, player, dotsTag)) {
         throw runtime_error("Error in dots_msg_send");
     }
 
@@ -119,7 +118,7 @@ size_t DotsPlayer::recv_no_stats(int player, const PlayerBuffer& buffer,
 #endif
 
     size_t bytes_received;
-    if (dots_msg_recv(buffer.data, buffer.size, player, dotsTag,
+    if (dots_msg_recv(NULL, buffer.data, buffer.size, player, dotsTag,
                 &bytes_received)) {
         throw runtime_error("Error in dots_msg_recv");
     }

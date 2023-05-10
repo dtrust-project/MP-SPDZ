@@ -78,12 +78,21 @@ Processor<sint, sgf2n>::Processor(int thread_num,Player& P,
       get_parameterized_filename(P.my_num(), thread_num,
           PREP_DIR "Binary-Output"), ios_base::out);
 
-  open_input_file(P.my_num(), thread_num, machine.opts.cmd_private_input_file, machine.use_dots);
+  if (machine.dots_request) {
+      if (machine.dots_request->args_len < 2) {
+          throw new runtime_error("Not enough arguments to specify input/output files!");
+      }
+
+      open_input_file(string((char *) machine.dots_request->args[0].ptr));
+      setup_redirection(string((char *) machine.dots_request->args[1].ptr), out);
+  } else {
+      open_input_file(P.my_num(), thread_num, machine.opts.cmd_private_input_file);
+      setup_redirection(P.my_num(), thread_num, opts, out);
+  }
 
   secure_prng.ReSeed();
   shared_prng.SeedGlobally(P, false);
 
-  setup_redirection(P.my_num(), thread_num, opts, machine.use_dots, out);
   Procb.out = out;
 }
 

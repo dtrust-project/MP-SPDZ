@@ -54,11 +54,11 @@ void Machine<sint, sgf2n>::init_binary_domains(int security_parameter, int lg2)
 
 template<class sint, class sgf2n>
 Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
-        bool use_dots, const OnlineOptions opts, int lg2)
+        dots_request_t* dots_request, const OnlineOptions opts, int lg2)
   : my_number(playerNames.my_num()), N(playerNames),
     direct(opts.direct), opening_sum(opts.opening_sum),
     receive_threads(opts.receive_threads), max_broadcast(opts.max_broadcast),
-    use_encryption(use_encryption), use_dots(use_dots),
+    use_encryption(use_encryption), dots_request(dots_request),
     live_prep(opts.live_prep), opts(opts)
 {
   OnlineOptions::singleton = opts;
@@ -77,7 +77,7 @@ Machine<sint, sgf2n>::Machine(Names& playerNames, bool use_encryption,
   mkdir_p(PREP_DIR);
 
   string id = "machine";
-  if (use_dots) {
+  if (dots_request) {
       P = new DotsPlayer(id);
   } else {
       if (use_encryption)

@@ -51,7 +51,7 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
 #endif
   Player* player;
   string id = "thread" + to_string(num);
-  if (machine.use_dots)
+  if (machine.dots_request)
     {
       player = new DotsPlayer(id);
     }
