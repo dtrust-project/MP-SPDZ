@@ -10,6 +10,8 @@
 #include "FHEOffline/PairwiseMachine.h"
 #include "Tools/Bundle.h"
 
+#include "Networking/DotsPlayer.h"
+
 template<class T>
 PairwiseMachine* HemiPrep<T>::pairwise_machine = 0;
 
@@ -74,7 +76,7 @@ vector<Multiplier<typename T::clear::FD>*>& HemiPrep<T>::get_multipliers()
     lock.lock();
     if (pairwise_machine == 0 or pairwise_machine->enc_alphas.empty())
     {
-        PlainPlayer P(this->proc->P.N, "Hemi" + T::type_string());
+        DotsPlayer P("Hemi" + T::type_string());
         if (pairwise_machine == 0)
             basic_setup(P);
         pairwise_machine->setup<FD>().covert_key_generation(P,

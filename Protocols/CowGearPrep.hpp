@@ -10,6 +10,8 @@
 #include "Protocols/ReplicatedPrep.hpp"
 #include "FHEOffline/DataSetup.hpp"
 
+#include "Networking/DotsPlayer.h"
+
 template<class T>
 PairwiseMachine* CowGearPrep<T>::pairwise_machine = 0;
 template<class T>
@@ -101,7 +103,7 @@ PairwiseGenerator<typename T::clear::FD>& CowGearPrep<T>::get_generator()
     lock.lock();
     if (pairwise_machine == 0 or pairwise_machine->enc_alphas.empty())
     {
-        PlainPlayer P(proc->P.N, "CowGear" + T::type_string());
+        DotsPlayer P("CowGear" + T::type_string());
         if (pairwise_machine == 0)
             setup(P, proc->MC.get_alphai());
         else

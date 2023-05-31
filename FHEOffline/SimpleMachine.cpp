@@ -18,6 +18,7 @@
 #include "Protocols/Share.hpp"
 #include "Protocols/MAC_Check.hpp"
 #include "Math/modp.hpp"
+#include "Networking/DotsPlayer.h"
 
 void* run_generator(void* generator)
 {
@@ -103,7 +104,7 @@ void MachineBase::parse_options(int argc, const char** argv)
 }
 
 MultiplicativeMachine::MultiplicativeMachine() :
-        P(N, "machine-coordinator")
+        P("machine-coordinator")
 {
     Share<gfp>::MAC_Check::setup(P);
     Share<gf2n_short>::MAC_Check::setup(P);
@@ -229,7 +230,7 @@ void MultiplicativeMachine::generate_setup(int slack)
 template <class FD>
 void MultiplicativeMachine::fake_keys(int slack)
 {
-    PlainPlayer P(N, "fake");
+    DotsPlayer P("fake");
     octetStream os;
     PartSetup<FD>& part_setup = setup.part<FD>();
     if (P.my_num() == 0)

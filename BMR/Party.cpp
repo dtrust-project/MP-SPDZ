@@ -33,6 +33,7 @@
 #include "GC/Program.hpp"
 #include "Processor/Instruction.hpp"
 #include "Protocols/Share.hpp"
+#include "Networking/DotsPlayer.h"
 
 ProgramParty* ProgramParty::singleton = 0;
 
@@ -248,7 +249,7 @@ FakeProgramParty::FakeProgramParty(int argc, const char** argv) :
 		getline(schfile, curr);
 	}
 	cout << "Compiler: " << prev << endl;
-	P = new PlainPlayer(N, 0);
+	P = new DotsPlayer("0");
 	Share<gf2n_long>::MAC_Check::setup(*P);
 	if (argc > 4)
 		threshold = atoi(argv[4]);

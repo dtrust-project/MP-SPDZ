@@ -11,6 +11,7 @@
 
 #include "instructions.h"
 
+#include "Networking/DotsPlayer.h"
 #include "Tools/benchmarking.h"
 
 #include "Machine.hpp"
@@ -65,7 +66,11 @@ void ThreadMaster<T>::run()
         insecure("preprocessing from file in binary virtual machines");
     }
 
-    P = new PlainPlayer(N, "main");
+    if (machine.use_dots) {
+        P = new DotsPlayer("main");
+    } else {
+        P = new PlainPlayer(N, "main");
+    }
 
     machine.load_schedule(progname);
     machine.reset(machine.progs[0], memory);

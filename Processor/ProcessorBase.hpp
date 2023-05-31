@@ -24,6 +24,12 @@ void ProcessorBase::open_input_file(const string& name)
     input_filename = name;
 }
 
+inline
+void ProcessorBase::setup_redirection(const string& name, SwitchableOutput& out) {
+    stdout_redirect_file.open(name.c_str(), ios_base::out);
+    out.redirect_to_file(stdout_redirect_file);
+}
+
 template<class T>
 T ProcessorBase::get_input(bool interactive, const int* params)
 {

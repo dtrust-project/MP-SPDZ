@@ -31,6 +31,12 @@ Names::Names(int player, int nplayers, const string& servername, int pnb,
   Server::start_networking(*this, player, nplayers, servername, pnb, my_port);
 }
 
+void Names::init(int player, int n)
+{
+  player_no=player;
+  nplayers=n;
+}
+
 void Names::init(int player,int pnb,vector<string> Nms)
 {
   player_no=player;

@@ -61,6 +61,7 @@ public:
 
   void setup_redirection(int my_nu, int thread_num, OnlineOptions& opts,
       SwitchableOutput& out);
+  void setup_redirection(const string& name, SwitchableOutput& out);
 };
 
 #endif /* PROCESSOR_PROCESSORBASE_H_ */

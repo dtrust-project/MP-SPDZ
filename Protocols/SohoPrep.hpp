@@ -9,6 +9,8 @@
 #include "ReplicatedPrep.hpp"
 #include "FHEOffline/DataSetup.hpp"
 
+#include "Networking/DotsPlayer.h"
+
 template<class T>
 PartSetup<typename SohoPrep<T>::FD>* SohoPrep<T>::setup = 0;
 
@@ -42,7 +44,7 @@ void SohoPrep<T>::buffer_triples()
     lock.lock();
     if (not setup)
     {
-        PlainPlayer P(proc->P.N, "Soho" + T::type_string());
+        DotsPlayer P("Soho" + T::type_string());
         basic_setup(P);
     }
     lock.unlock();
@@ -84,7 +86,7 @@ void SohoPrep<T>::buffer_squares()
     lock.lock();
     if (not setup)
     {
-        PlainPlayer P(proc->P.N, "Soho" + T::type_string());
+        DotsPlayer P("Soho" + T::type_string());
         basic_setup(P);
     }
     lock.unlock();

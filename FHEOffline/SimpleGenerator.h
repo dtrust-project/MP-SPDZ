@@ -6,6 +6,7 @@
 #ifndef FHEOFFLINE_SIMPLEGENERATOR_H_
 #define FHEOFFLINE_SIMPLEGENERATOR_H_
 
+#include "Networking/DotsPlayer.h"
 #include "Networking/Player.h"
 #include "FHEOffline/SimpleEncCommit.h"
 #include "FHEOffline/DataSetup.h"
@@ -30,8 +31,8 @@ public:
 
     map<string, Timer> timers;
 
-    GeneratorBase(int thread_num, const Names& N, Player* player = 0) :
-            player(player ? 0 : new PlainPlayer(N, to_string(thread_num))),
+    GeneratorBase(int thread_num, const Names& N __attribute__((unused)), Player* player = 0) :
+            player(player ? 0 : new DotsPlayer(to_string(thread_num))),
             thread_num(thread_num),
             P(player ? *player : *this->player), thread(0), total(0)
     {

@@ -41,6 +41,7 @@ public:
     vector<Program> progs;
 
     bool use_encryption;
+    bool use_dots;
     bool more_comm_less_comp;
 
     Machine();

@@ -70,7 +70,7 @@ public:
 
 class MultiplicativeMachine : public MultiplicativeMachineParams
 {
-    PlainPlayer P;
+    DotsPlayer P;
 
 protected:
     void parse_options(int argc, const char** argv);

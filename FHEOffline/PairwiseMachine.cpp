@@ -10,6 +10,8 @@
 
 #include "Protocols/fake-stuff.hpp"
 
+#include "Networking/DotsPlayer.h"
+
 PairwiseMachine::PairwiseMachine(Player& P) :
     P(P),
     other_pks(P.num_players(), {setup_p.params, 0}),
@@ -18,7 +20,7 @@ PairwiseMachine::PairwiseMachine(Player& P) :
 }
 
 RealPairwiseMachine::RealPairwiseMachine(int argc, const char** argv) :
-    MachineBase(argc, argv), PairwiseMachine(*new PlainPlayer(N, "pairwise"))
+    MachineBase(argc, argv), PairwiseMachine(*new DotsPlayer("pairwise"))
 {
     init();
 }

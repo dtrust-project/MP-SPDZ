@@ -5,6 +5,7 @@
 
 #include "Networking/Server.h"
 #include "Networking/CryptoPlayer.h"
+#include "Networking/DotsPlayer.h"
 #include "Math/gfp.h"
 #include "ECDSA/P256Element.h"
 #include "Protocols/SemiShare.h"
@@ -88,7 +89,7 @@ void run(int argc, const char** argv)
     int n_tuples = 1000;
     if (not opt.lastArgs.empty())
         n_tuples = atoi(opt.lastArgs[0]->c_str());
-    PlainPlayer P(N, "ecdsa");
+    DotsPlayer P("ecdsa");
     P256Element::init();
     P256Element::Scalar::next::init_field(P256Element::Scalar::pr(), false);
 
